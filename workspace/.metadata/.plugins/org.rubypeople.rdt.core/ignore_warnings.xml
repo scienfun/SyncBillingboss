@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<warnings>
+<warning>
+<resource>/src/tornado/trunk/test/functional/profiles_controller_test.rb</resource>
+<id>1073741824</id>
+<offset>137</offset>
+<end>150</end>
+</warning>
+<warning>
+<resource>/src/tornado/trunk/test/functional/profiles_controller_test.rb</resource>
+<id>1073741824</id>
+<offset>8481</offset>
+<end>8493</end>
+</warning>
+<warning>
+<resource>/src/tornado/trunk/app/controllers/session_controller.rb</resource>
+<id>1073741824</id>
+<offset>2474</offset>
+<end>2475</end>
+</warning>
+<warning>
+<resource>/src/tornado/trunk/app/controllers/session_controller.rb</resource>
+<id>1073741824</id>
+<offset>2474</offset>
+<end>2475</end>
+</warning>
+</warnings>

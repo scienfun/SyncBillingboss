@@ -1,0 +1,419 @@
+require File.dirname(__FILE__) + '/../test_helper'
+require 'users_controller'
+
+# Re-raise errors caught by the controller.
+class UsersController; def rescue_action(e) raise e end; end
+
+class UsersControllerTest < ActionController::TestCase
+  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead
+  # Then, you can remove it from this and the units test.
+  include AuthenticatedTestHelper
+
+  fixtures :users
+
+  def setup
+    ::AppConfig.activate_users = false
+    @emails = ActionMailer::Base.deliveries
+    @emails.clear    
+    # Without this call stubbed out, it takes about 10 minutes to test this controller.
+    UserMailer.stubs(:deliver_signup_notification)
+  end
+
+  def test_thankyou
+    user_id = login_as(:basic_user)
+    @controller.stubs(:api_token?).returns true
+    @controller.stubs(:api_token).returns(ApiToken.new(:mode => 'simply:signup'))
+    get :thankyou, :id => user_id
+    assert_template 'users/simply/thankyou'
+    assert_layout "layouts/simply/main"
+  end
+
+  def test_thankyou_send_invoice_new_gateway
+    user_id = login_as(:basic_user)
+    @controller.stubs(:api_token?).returns true
+    gateway = UserGateway.new_polymorphic(:gateway_name => 'sage_sbs')
+    @controller.stubs(:api_token).returns(ApiToken.new(:mode => 'simply:send_invoice', :new_gateway => true, :user_gateway => gateway))
+    get :thankyou, :id => user_id
+    assert_template 'users/simply/thankyou'
+    assert_tag :attributes => { :id => 'complete-btn' }
+    assert_layout "layouts/simply/main"
+  end
+  
+  def test_thankyou_send_invoice
+    user_id = login_as(:basic_user)
+    @controller.stubs(:api_token?).returns true
+    gateway = UserGateway.new_polymorphic(:gateway_name => 'sage_sbs')
+    @controller.stubs(:api_token).returns(ApiToken.new(:mode => 'simply:send_invoice', :new_gateway => false, :user_gateway => gateway))
+    get :thankyou, :id => user_id
+    assert_template 'users/simply/thankyou'
+    assert_tag :attributes => { :id => 'send_invoice_now_content' }
+    assert_layout "layouts/simply/main"
+  end
+  
+  def test_should_show_login_page_api_token
+    @controller.stubs(:api_token?).returns true
+    get :new
+    assert_response :success
+    assert_template "users/simply/new"
+    # The signup_browsal_flow_test asserted the simply/main layout here but I don't see how that was possible...
+    assert_layout "layouts/simply/external_main"
+    assert_select "input#user_login"
+  end
+
+  def test_should_show_login_page
+    get :new
+    assert_response :success
+    assert_template "new"
+    assert_select "input#user_login"
+  end
+
+  def test_should_allow_signup
+    assert_difference 'User.count' do
+      create_user
+      assert_response :success
+      assert @response.body.include?("Please wait...")
+    end
+  end
+
+  def test_should_create_biller_with_user
+    assert_difference 'Biller.count' do
+      assert_difference 'User.count' do
+        create_user
+        assert_response :success
+        assert @response.body.include?("Please wait...")
+      end
+    end
+  end
+
+  def test_should_require_password_on_signup
+    assert_no_difference 'User.count' do
+      create_user(:password => nil)
+      assert assigns(:user).errors.on(:password)
+      assert_response :success
+    end
+  end
+
+  def test_should_require_password_confirmation_on_signup
+    assert_no_difference 'User.count' do
+      create_user(:password_confirmation => nil)
+      assert assigns(:user).errors.on(:password_confirmation)
+      assert_response :success
+    end
+  end
+
+  def test_should_not_activate_user_without_key
+    get :activate
+    assert_nil flash[:notice]
+  rescue ActionController::RoutingError
+    # in the event your routes deny this, we'll just bow out gracefully.
+  end
+
+  def test_should_not_activate_user_with_blank_key
+    get :activate, :activation_code => ''
+    assert_nil flash[:notice]
+  rescue ActionController::RoutingError
+    # well played, sir
+  end
+  
+  def test_should_not_activate_user_with_invalid_key
+    get :activate, :activation_code => 'some invalid key'
+    assert_nil flash[:notice]
+  rescue ActionController::RoutingError
+    # well played, sir
+  end
+  
+  def xxxtest_activation_and_email
+    
+    ::AppConfig.activate_users = true
+    
+    # Create a new user.
+    the_login = 'unactivateduser@foo.com'
+    theEmail = 'unactivateduser@foo.com'
+    post :create, :user => { :login => the_login, :password => 'test', :password_confirmation => 'test' }
+    u = User.find(:first, :conditions => {:login => the_login} )
+    assert_not_nil u
+    
+    # User cannot be authenticated without first being activated.
+    assert_nil User.authenticate(the_login, 'test')
+    assert_not_nil flash[:notice]
+    assert_match(/Please check your e-mail to activate your account./, flash[:notice])
+    assert_redirected_to login_path   
+    
+    # Check the e-mail contains the activation code.
+    assert_equal(1, @emails.size)
+    email = @emails.first
+    assert_equal(email.to[0], theEmail)
+    assert_match(/#{u.activation_code}/, email.body)
+    
+    # Activate the user, making sure only one was activated.
+    number_already_activated = User.count( :conditions => 'activated_at is not null' )
+    get :activate, :activation_code => u.activation_code
+    assert_equal(number_already_activated+1, User.count( :conditions => 'activated_at is not null' ))
+    assert_redirected_to home_path 
+    assert_match(/Your account is now activated/, flash[:notice])
+    
+    # Test authentication.
+    assert_equal u, User.authenticate(the_login, 'test')
+    
+  end
+  
+  def test_should_submit_signup_with_ssl_on_production
+    old_env = ENV['RAILS_ENV']
+    ENV['RAILS_ENV'] = 'production'
+
+    silence_warnings do
+      old_app_config = ::AppConfig
+      Object.const_set(:AppConfig, LastObelus::YAML::OYAML.load_scoped_config(File.join(RAILS_ROOT, 'config','application.yml'), ENV['RAILS_ENV']))
+      
+      get :new
+      assert_select "form[action=?]", "https://test.host/users"
+
+      ENV['RAILS_ENV'] = old_env
+      Object.const_set(:AppConfig, old_app_config)
+    end
+  end
+  
+  def test_should_ask_for_valid_email_on_forgot_password_with_blank_login
+    get :forgot_password
+    assert_response :success
+    assert_template "users/forgot_password" 
+    assert_match /Please enter the email/, @response.body
+    assert_select "input#user_login"
+    assert !assigns(:did_send)
+  end
+  
+  def test_should_create_access_key_and_send_change_password_mail_on_forgot_password
+    User.expects(:find_by_login).with(users(:basic_user).login).returns(users(:basic_user))
+    AccessKey.any_instance.expects(:make_key).returns('bobkey')
+    UserMailer.expects(:deliver_change_password).with(users(:basic_user), 'bobkey')
+    get :forgot_password, :login => users(:basic_user).login
+    assert_match /password has been sent to #{users(:basic_user).login}/, @response.body
+    assert_select("input#user_login", false)    
+    assert assigns(:did_send)
+  end
+
+  def test_should_require_valid_access_key_on_change_password_get
+    AccessKey.stubs(:find_by_key).returns(nil)
+    get :change_password, :access => 'whatever'
+    assert_response :forbidden
+    assert_match(/invalid or has expired/, @response.body)
+    assert_select "form", false, "Should be no form with invalid access"
+  end
+  
+  def test_should_require_valid_access_key_on_change_password_post
+    ak = mock()
+    AccessKey.expects(:find_by_key).with('whatever').returns(ak)
+    ak.expects(:use?).returns(false)
+    ak.expects(:keyable).returns users(:basic_user)
+
+    post :change_password, :access => 'whatever'
+    assert_response :forbidden
+    assert_match(/invalid or has expired/, @response.body)
+    assert_select "form", false, "Should be no form with invalid access"
+  end
+  
+  def test_should_change_password
+    user = users(:basic_user)
+    # first make sure user has password we think
+    assert user.authenticated?('test')
+    
+    # need an access_key
+    ak = mock()
+    AccessKey.expects(:find_by_key).with('whatever').returns(ak)
+    ak.expects(:use?).returns(true)
+    ak.expects(:keyable).returns user
+    
+    post :change_password, :access => 'whatever', :user => {:password => 'bleargh', :password_confirmation => 'bleargh'}
+    assert_redirected_to "/login"
+    assert !user.authenticated?('test')
+    assert user.authenticated?('bleargh')
+  end
+  
+  def test_ssan_signup
+    get :new, {:signup_type => "ssan"}
+    create_user
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert_equal "ssan", u.signup_type
+  end
+  
+  def test_soho_signup
+    get :new, {:signup_type => "soho"}
+    create_user
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert_equal "soho", u.signup_type    
+  end
+  
+  def test_bad_session_still_soho
+    get :new, {:signup_type => "asdf"}
+    create_user
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert_equal "soho", u.signup_type    
+  end
+  
+  def test_no_session_still_soho
+    get :new
+    create_user
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert_equal "soho", u.signup_type     
+  end
+  
+  def test_change_blank_password
+    get :change_password, :access => ""
+    assert_response :redirect
+  end
+  
+  def test_credit_referral
+    r = Referral.new
+    r.referring_email = "me@me.com"
+    r.referring_name = "me"
+    r.friend_email = "you@you.com"
+    r.referral_code = "asdf"
+    r.sent_at = Time.now
+    assert r.valid?
+    r.save!
+    id = r.id
+    code = r.referral_code
+        
+    get :new, :referral_code => code
+    get :new, :referral_code => code
+    create_user
+    assert_response :success
+    r = Referral.find(id)
+    assert r.accepted_at > Time.now-1.minute # it is updating accepted date with just the date and no time
+    assert !r.user_id.blank?    
+  end
+  
+  def test_see_ucd_checkbox_on_signup_page
+    get :new
+    assert @response.body.include?("Sign me up")
+  end
+  
+  def test_ucd_on_if_signed_up_with_checkbox_enabled
+    post :create, :user_communications => "on", :user => { :login => 'quire@example.com', :email => 'quire@example.com',
+      :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' }
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert !u.nil?
+    assert_equal true, u.profile.mail_opt_in
+  end
+
+  
+  def test_ucd_off_if_signed_up_with_checkbox_disabled
+    post :create, :user_communications => "off", :user => { :login => 'quire@example.com', :email => 'quire@example.com',
+      :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' }
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert !u.nil?
+    assert_equal false, u.profile.mail_opt_in
+  end
+
+  def test_ucd_off_if_signed_up_with_checkbox_missing
+    post :create, :user => { :login => 'quire@example.com', :email => 'quire@example.com',
+      :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' }
+    u = User.find(:first, :conditions => {:login => "quire@example.com"})
+    assert !u.nil?
+    assert_equal false, u.profile.mail_opt_in
+  end
+  
+  def test_signup_with_complete_profile_when_required
+    get :new, {:signup_type => "rac"}
+    assert_difference 'User.count', 1 do
+      post :create, {:user =>    {:login => 'quire@example.com', :email => 'quire@example.com',
+                                :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' },
+                     :profile_company_name => "company_name", :profile_contact_name => "contact_name",
+                     :profile_company_address1 => "company_address1", :profile_company_city => "Vancouver", 
+                     :profile_company_state => "BC", :profile_company_postalcode => "V1V1V1", :profile_company_phone => "123456789"}
+    end
+    u = User.find(:first, :conditions => {:login => 'quire@example.com'})
+    assert_equal "rac", u.signup_type
+  end
+  
+  def test_signup_with_incomplete_profile_when_required
+    get :new, {:signup_type => "rac"}
+    assert_no_difference 'User.count' do
+      create_user
+    end
+    assert @response.body.include?("Please fill out all address information")    
+  end
+  
+  
+  def test_mobile_version_view
+    get :new, :mobile => 'true'
+    assert @response.body.include?("mobile version")
+    assert @response.body.include?("mobile.css")
+    deny @response.body.include?("shared.css")
+    deny @response.body.include?("static.css")
+  end
+  
+  def test_mobile_version_on_invalid_submit
+    get :new, :mobile => 'true'
+    post :create, :user => { :login => 'quire@example.com', :email => 'quire@example.com',
+      :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '0' }
+    assert @response.body.include?("mobile version")
+    assert @response.body.include?("errorExplanation")
+    assert @response.body.include?("mobile.css")
+    deny @response.body.include?("shared.css")
+    deny @response.body.include?("static.css")
+  end  
+
+  def test_api_token_should_reset_user_info_after_signup
+    # Specific test: create user when already authenticated.
+    api_token = ApiToken.new(:mode => 'simply:signup', :user => users(:basic_user), :password => 'test')
+    @controller.stubs(:api_token).returns(api_token)
+    @controller.stubs(:api_token?).returns(api_token)
+    get :new
+    assert_difference 'User.count', 1 do
+      post :create, :user =>  {:login => 'quire@example.com', :email => 'quire@example.com',
+                                :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' }
+    end
+    assert_response :success
+    u = User.find(:first, :conditions => {:login => 'quire@example.com'})
+    assert api_token.has_user_info?, "api_token should have both user and password."
+    assert_equal 'quire@example.com', api_token.user.login, 'api_token.user should be the newly created user.'
+    assert_equal 'quire', api_token.password, 'api_token_password should be for new user.'
+  end
+    
+if ::AppConfig.activate_users   
+  def test_should_display_notice_on_invalid_login_on_forgot_password
+    User.expects(:find_by_login).with('whatever').returns(nil)
+    AccessKey.any_instance.expects(:make_key).never
+    UserMailer.expects(:deliver_change_password).never
+    get :forgot_password, :login => 'whatever'
+    assert_match /e could not find a user with the email address whatever/, flash[:notice]
+    assert_select("input#user_login")    
+    assert !assigns(:did_send)
+  end
+  def test_should_display_notice_on_invalid_login_on_forgot_password
+    User.expects(:find_by_login).with('whatever').returns(nil)
+    UserMailer.expects(:deliver_signup_notification).never
+    get :remail_activation, :login => 'whatever'
+    assert_match /e could not find a user with the email address whatever/, @response.body
+    assert_select("input#user_login")    
+    assert !assigns(:did_send)
+  end
+ 
+  def test_should_display_notice_on_already_activated_user_on_remail_activation
+    assert users(:basic_user).activated?
+    User.expects(:find_by_login).with(users(:basic_user).login).returns(users(:basic_user))
+    UserMailer.expects(:deliver_signup_notification).never
+    get :remail_activation, :login => users(:basic_user).login
+    assert_match /This user is already activated/, @response.body
+    assert_select("input#user_login")
+    assert !assigns(:did_send)
+  end
+
+  def test_should_remail_activation
+    User.expects(:find_by_login).with(users(:unactivated_user).login).returns(users(:unactivated_user))
+    UserMailer.expects(:deliver_signup_notification).with(users(:unactivated_user))
+    get :remail_activation, :login => users(:unactivated_user).login
+    assert_match /email containing instructions on how to activate your account has been sent to #{users(:unactivated_user).login}/, @response.body
+    assert_select("input#user_login", false)
+    assert assigns(:did_send)
+  end
+
+end
+  
+  protected
+    def create_user(options = {})
+      post :create, :user => { :login => 'quire@example.com', :email => 'quire@example.com',
+        :password => 'quire', :password_confirmation => 'quire', :terms_of_service => '1' }.merge(options)
+    end
+end

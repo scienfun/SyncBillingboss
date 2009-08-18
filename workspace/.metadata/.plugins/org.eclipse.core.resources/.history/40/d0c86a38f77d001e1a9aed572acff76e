@@ -1,0 +1,344 @@
+# Filters added to this controller apply to all controllers in the application.
+# Likewise, all the methods added will be available for all controllers.
+
+class ApplicationController < ActionController::Base
+  around_filter :set_timezone
+    
+  before_init_gettext :init_language
+  init_gettext "billingboss"
+    
+  include Globalizer
+  include Localizer
+  
+  include SimpleCaptcha::ControllerHelpers 
+
+  # FIXME: this may cause unexpected behaviour if two helper modules define the same method name
+  helper :all # include all helpers, all the time # FIXME -- this may be a performance drag
+
+
+  helper_method :print?, :print! #, :show_lnav?, :show_lnav!
+  helper_method :controller_name_for_theme
+  helper_method :active_layout
+  helper_method :logout_current_user
+  
+  layout :internal_or_external_layout
+
+  before_filter :collect_layout_params
+  before_filter :detect_user_agent
+  filter_parameter_logging :password, :password_confirmation
+ 
+  # See ActionController::RequestForgeryProtection for details
+  # If you're using the Cookie Session Store you can leave out the :secret
+  protect_from_forgery
+  
+  include AuthenticatedSystem
+
+  ActionView::Base.register_fallback_format(:pdf, :html)
+
+   caches_pdfs :storage => ::AppConfig.pdf_storage
+  
+  protected
+  
+  # used in invoice and payment controllers
+  def set_up_display_invoice
+    #load the company's profile for displaying company address, logo etc...
+    #@profile = Profile.new(@invoice.created_by) # this line is bizarre - I'll try to do without it
+    @profile = @invoice.profile
+    @custom_layout = "main"    
+    @printable = true
+    @skip_header = true
+    @hide_analytics = true
+    @invoice_customer_view = true
+    cookies["lang"].blank? ? set_locale(@invoice.customer.language) : set_locale(cookies["lang"])
+  end
+  
+  def bookkeeper_required
+    return true if not current_user.bookkeeper.nil?
+    render :text=>'' and return false
+  end
+  
+  def find_customer
+    @customer = current_user.customers.find(params[:customer_id]) unless params[:customer_id].blank?
+  end
+  
+  def polling_for(options={})
+    max_time = options[:max_time] || 5.0
+    BillingTest.log "-- polling_for #{max_time}" if $log_concurrency #tmp_on
+    result = yield
+    return unless result
+    interval = options[:interval] || max_time/10
+    interval_decay = options[:interval_decay] || 1.5
+    interval_spread = options[:interval_spread] || 0.3
+    now = Time.now
+    while result and ((waited_for = (Time.now - now)) < max_time)
+      result = yield
+      delta = interval * interval_spread
+      wait = interval - delta + rand(delta*2)
+      sleep [wait, max_time - waited_for].min
+      interval *= interval_decay
+    end
+    if result
+      BillingTest.log "-- polling_for TIMEOUT" if $log_concurrency #tmp_on
+      RAILS_DEFAULT_LOGGER.warn("POLLING_FOR TIMEOUT")
+    end
+    result
+  end
+  
+  def collect_layout_params
+    p = params.delete(:_print)
+    @print = !!p unless p.nil?
+    
+    p = params.delete(:_show_lnav)
+    @show_lnav = !!p unless p.nil?    
+  end
+
+  def detect_user_agent
+    #always obey manual user override, regardless of their user agent
+    if is_mobile?
+       session[:mobile_browser] = true
+    else
+       session[:mobile_browser] = false
+    end
+    begin
+    if params[:mobile]
+
+      session[:mobile_browser] = true if params[:mobile].to_s.downcase == "true"
+      session[:mobile_browser] = false if params[:mobile].to_s.downcase == "false"
+
+    #without an explicit param, set session according to user agent
+    #this should only be called if session has NEVER been set before, 
+    #or the users manual override will be forgotten on the next request
+    elsif session[:mobile_browser].blank?
+      if ::AppConfig.mobile_enabled and request.user_agent.to_s.downcase.include?("mobile")
+        session[:mobile_browser] = true
+  #      puts "MOBILE REQUEST"
+      end
+    end
+    end
+  end
+  
+  #render_with_mobile_support should be used to replace an explicit render command
+  #use mobile_layout instead of layout param because layout param should be preserved in case
+  #the normal render() is called
+  def render_with_mobile_support(params=nil)
+    if session[:mobile_browser]
+      return render_mobile(params)
+    else
+      return render(params)
+    end
+  end
+  
+  #render_mobile can be called directly when there is no explicit render statement
+  #or when the statement is retained as a separate action in the caller based on a condition
+  #i.e. it cannot REPLACE a render statement. for that, use render_with_mobile_support instead
+  def render_mobile(params=nil)
+    #if mobile browser is detected, render mobile layout
+    #unless specified otherwise by caller, it is assumed to be at views/controller_name/mobile/action_name.html.erb
+    action = params[:action] unless !params || !params[:action]
+    controller = params[:controller] unless !params || !params[:controller]
+    mobile_layout = params[:mobile_layout] unless !params || !params[:mobile_layout]
+    
+    action ||= action_name
+    controller ||= controller_name
+    layout ||= "mobile"
+    
+    if session[:mobile_browser]
+      params[:layout] = nil
+      return render(:template => "/#{controller}/mobile/#{action}", :layout => mobile_layout)
+    else
+      return false
+    end
+  end
+  
+  def print?
+    @print = false unless instance_variable_defined? :@print
+    @print
+  end
+  def print_on!; @print = true; end
+  def print_off!; @print = false; end
+  
+  def controller_name_for_theme
+    @controller_name_for_theme || self.controller_name
+  end
+
+  def controller_name_for_theme=(name)
+    @controller_name_for_theme = name
+  end
+
+  # destination must be a string or a hash acceptable to redirect_to.
+  # this does not work in all browsers -- some browsers must use a static page with meta-refresh
+  # use redirect_to_path_dropping_ssl -- but only if you have a path, not an options hash
+  def redirect_and_drop_SSL(destination, force=true)
+    case destination || {}
+    when String
+      if destination.match(/^https:/)
+        destination.gsub!(/^https:/, 'http:') 
+      else
+        destination = 'http://' + request.host_with_port + destination
+      end
+    when Hash
+        destination[:protocol], destination[:only_path] = 'http', false if request.ssl?  
+    end   
+    redirect_to(destination) if (request.ssl? or force)
+  end
+  
+  def default_layout(force_external=false)
+    if logged_in? && !force_external
+      'main'
+    else
+      'external_main'
+    end
+  end
+
+  def internal_layout
+    raise Sage::BusinessLogic::Exception::AccessDeniedException unless logged_in? 
+    'main'
+  end
+
+  def render_with_a_layout(action, layout=nil)
+    render :action => "#{action}_#{!layout.nil? ? layout : default_layout}", :layout => (!layout.nil? ? layout : default_layout)        
+  end
+    
+  def internal_or_external_layout(force_external=false)
+    return @custom_layout if @custom_layout
+    default_layout(force_external)
+  end
+  
+  def external_layout
+    internal_or_external_layout(true)
+  end
+  
+  def stream_csv(filename=nil, &block)
+    require 'fastercsv'
+    filename ||= params[:action] + ".csv"    
+
+    #this is required if you want this to work with IE        
+    if request.env['HTTP_USER_AGENT'] =~ /msie/i
+      headers['Pragma'] = 'public'
+      headers["Content-Type"] = "application/octet-stream" 
+      headers['Cache-Control'] = 'private'
+      headers['Content-Disposition'] = "attachment; filename=\"#{filename}\"" 
+      headers['Expires'] = "0" 
+    else
+      headers["Content-Type"] ||= 'text/csv'
+      headers["Content-Disposition"] = "attachment; filename=\"#{filename}\"" 
+    end
+
+    csv = ""
+    csv = FasterCSV.generate(csv, :col_sep => ',', :row_sep => "\r\n", &block) 
+    send_data(csv,
+          :type => 'text/csv; charset=utf-8; header=present',
+          :filename => filename)
+  end
+  
+  def setup_search_filters(default_key, opts={})
+    options = {
+      :page_size => 10      
+    }.merge(opts)
+    options[:parent] ||= current_user
+    options[:current] ||= params[:page]
+  
+    key = params[:filters] && params[:filters].delete(:search_key)
+    key ||= default_key
+    @filters = OpenStruct.new(options[:parent].set_or_get_search!(key, params[:filters]))
+    @filters.page = {:current => options[:current], :size => options[:page_size]} unless options[:page_size].nil?
+  end
+  
+  def rescue_action_in_public(exception)
+     redirect_to '/global_rescue'
+  #  render :text => "<html><body><p>
+  #There was a global error processing your request.</p>
+  #  <!--  #{exception}  --></body></html>" 
+end
+
+
+  
+#  def show_lnav?
+#    @show_lnav = true unless instance_variable_defined? :@show_lnav
+#    @show_lnav
+#  end
+#  
+#  def show_lnav!
+#    @show_lnav = true
+#  end
+#
+#  def show_lnav_on!; @show_lnav = true; end
+#  def show_lnav_off!; @show_lnav = false; end
+
+  # used to split a param like :a => "1,2,3" to :a => ["1", "2", "3"]
+  def split_multi_params(multi_params, *keys)
+    return if multi_params.nil?
+    keys = multi_params.keys if keys.empty?
+    keys.each do |k|
+      if multi_params[k] 
+        multi_params[k] = multi_params[k].split(/[, ]+/)
+      end
+    end
+  end
+  
+  def log_trace(message = nil, level = :debug) 
+    return if ::AppConfig.quiet_log
+    if block_given?
+      logger.send(level, "#{ File.split(caller[0]).last }: #{yield}")
+    else
+      logger.send(level, "#{ File.split(caller[0]).last }: #{message}")
+    end
+  end
+  
+  def biller_view
+    current_user.profile.current_view = :biller unless !logged_in?
+  end
+  
+  def bookkeeper_view
+    current_user.profile.current_view = :bookkeeper unless !logged_in?
+  end
+
+  def admin_view
+    current_user.profile.current_view = :admin unless !logged_in?
+  end
+  
+  # this does a redirect through a static page so we can change protocols, necessary
+  # because a location header redirect with different protocol does not work on all browsers
+  def redirect_to_path_dropping_ssl(path)
+    @redirect_path = url_for(path)
+    if use_secure_forms?
+      @redirect_protocol = 'https'
+    else
+      @redirect_protocol = 'http'
+    end
+    render :template => '/session/redirect', :layout => false
+  end
+  
+  def logout_current_user
+    self.current_user.forget_me if logged_in?
+    cookies.delete :auth_token
+    reset_session
+  end
+  
+  def valid_session_signup_type
+    return false if session[:signup_type].blank?
+    User.SignupTypes.include?(session[:signup_type])
+  end
+  
+  # stub that is overridden by controllers that include api_token_support
+  def api_token?
+    false
+  end
+  
+  
+  #only called when necessary, but due to issues with 
+  #language redirection, it needs to be called from multiple
+  #places
+  def gather_special_params
+    if session[:heard_from].blank?
+      session[:heard_from] = "fr_canada_post" if params[:r_id] == "10"
+    end
+  end
+  
+  private
+  def set_timezone
+    TzTime.zone = TZInfo::Timezone.get("#{current_user.profile.tz}") if logged_in? 
+    yield
+    TzTime.reset!
+  end
+end

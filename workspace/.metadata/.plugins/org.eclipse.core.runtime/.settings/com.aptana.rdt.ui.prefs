@@ -1,0 +1,4 @@
+#Wed Jul 29 13:40:46 PDT 2009
+eclipse.preferences.version=1
+prompt_to_auto_install_gems=true
+dont_bug_about_gems_not_installed=always

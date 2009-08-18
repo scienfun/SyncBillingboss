@@ -1,0 +1,16 @@
+class AddLoginInfo < ActiveRecord::Migration
+  def self.up
+     add_column :users, :login_failure_attempts, :integer, :default => 0
+     add_column :users, :login_failure_timeout, :time
+     add_column :users, :last_failed_login, :time
+     add_column :users, :login_ip_address, :string
+     add_column :users, :account_locked, :boolean, :default => false
+  end
+  def self.down
+     remove_column :users, :login_failure_attempts
+     remove_column :users, :login_failure_timeout
+     remove_column :users, :last_failed_login
+     remove_column :users, :login_ip_address, :string
+     remove_column :users, :account_locked
+  end
+end

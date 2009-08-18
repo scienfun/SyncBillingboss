@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="com.palm.pdt.ui.launch.type">
+<stringAttribute key="APPLICATION" value="index.html"/>
+<stringAttribute key="PROJECT" value="mojo"/>
+<booleanAttribute key="com.palm.pdt.launch.inspect" value="false"/>
+<booleanAttribute key="com.palm.pdt.launch.mojoDebug" value="false"/>
+<stringAttribute key="com.palm.pdt.targetId" value="emulator"/>
+</launchConfiguration>

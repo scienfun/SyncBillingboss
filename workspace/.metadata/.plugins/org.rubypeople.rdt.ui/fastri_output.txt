@@ -1,0 +1,18 @@
+./fastri/ri_index.rb:566:in `binary_search': undefined method `[]' for nil:NilClass (NoMethodError)
+	from ./fastri/ri_index.rb:551:in `get_entry'
+	from ./fastri/ri_index.rb:400:in `get_method_entry'
+	from ./fastri/ri_service.rb:310:in `obtain_qualified_method_entries'
+	from ./fastri/ri_service.rb:309:in `each'
+	from ./fastri/ri_service.rb:309:in `obtain_qualified_method_entries'
+	from ./fastri/ri_service.rb:92:in `call'
+	from ./fastri/ri_service.rb:92:in `get_matches'
+	from ./fastri/ri_service.rb:90:in `each'
+	from ./fastri/ri_service.rb:90:in `get_matches'
+	from ./fastri/ri_service.rb:89:in `catch'
+	from ./fastri/ri_service.rb:89:in `get_matches'
+	from ./fastri/ri_service.rb:348:in `obtain_qualified_method_entries'
+	from ./fastri/ri_service.rb:136:in `obtain_entries'
+	from ./fastri/ri_service.rb:200:in `info'
+	from /home/andrew/workspace/.metadata/.plugins/org.rubypeople.rdt.launching/ruby/fri:325
+	from /home/andrew/workspace/.metadata/.plugins/org.rubypeople.rdt.launching/ruby/fri:320:in `each'
+	from /home/andrew/workspace/.metadata/.plugins/org.rubypeople.rdt.launching/ruby/fri:320

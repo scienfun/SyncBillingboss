@@ -1,0 +1,22 @@
+<% @controller_name = controller.controller_name unless (!controller or !controller.controller_name) %>
+<% @action_name = controller.action_name unless (!controller or !controller.action_name) %>
+<div class="footer" id="footer">
+		<table id="footer_icons_table" width="100%">
+			<tr id="footer_icons_row" >
+				<td class="footer_icon <%= ['invoices', 'payments'].include?(@controller_name) ? 'active_footer_icon' : '' %>">
+					<%= link_to(_("Invoices"), "/invoices/overview") %>
+				</td>
+				<td class="footer_icon <%= (@controller_name == 'customers') ? 'active_footer_icon' : '' %>">
+					<%= link_to(_("Customers"), "/customers/overview") %>
+				</td>
+				<td class="footer_icon">
+					<%= link_to(_("Settings"), "/profiles") %>
+				</td>
+			</tr>
+			<% if is_android? %>
+        <td class="footer_icon <%= 'active_footer_icon' : '' %>">
+           <%= link_to(_("Sync contacts"), "/contacts/sync") %>
+        </td>
+    <% end %>
+		</table>
+</div>

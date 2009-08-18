@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server-manager>
+<server type="WEBrick">
+<project>/src/tornado/trunk</project>
+<name>Billingboss</name>
+<host>0.0.0.0</host>
+<port>3002</port>
+<environment>development</environment>
+<runMode>run</runMode>
+</server>
+<server type="Mongrel">
+<project>/src/tornado/trunk</project>
+<name>Billingboss</name>
+<host>0.0.0.0</host>
+<port>3000</port>
+<environment>development</environment>
+<runMode>run</runMode>
+</server>
+<server type="Mongrel">
+<project>/src/tornado/trunk</project>
+<name>tornado</name>
+<host>0.0.0.0</host>
+<port>3004</port>
+<environment>development</environment>
+<runMode>run</runMode>
+</server>
+<server type="WEBrick">
+<project>/src/tornado/trunk</project>
+<name>Billingboss</name>
+<host>0.0.0.0</host>
+<port>3003</port>
+<environment>development</environment>
+<runMode>run</runMode>
+</server>
+<server type="Mongrel">
+<project>/src/tornado/trunk</project>
+<name>Billingboss</name>
+<host>0.0.0.0</host>
+<port>3001</port>
+<environment>development</environment>
+<runMode>run</runMode>
+</server>
+</server-manager>

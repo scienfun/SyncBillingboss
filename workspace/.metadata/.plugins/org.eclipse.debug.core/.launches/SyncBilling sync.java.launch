@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.python.pydev.customizations.app_engine.launching.AppEngineLaunchConfigurationType">
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/SyncBilling/src/billingboss/sync/sync.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+<booleanAttribute key="org.eclipse.debug.core.capture_output" value="true"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="${GOOGLE_APP_ENGINE}/dev_appserver.py"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="&quot;${workspace_loc:SyncBilling/src/billingboss/sync/sync.java}&quot;"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_WORKING_DIRECTORY" value="${workspace_loc:SyncBilling/src/billingboss/sync}"/>
+<stringAttribute key="org.python.pydev.debug.ATTR_INTERPRETER" value="__default"/>
+<stringAttribute key="org.python.pydev.debug.ATTR_PROJECT" value="SyncBilling"/>
+<intAttribute key="org.python.pydev.debug.ATTR_RESOURCE_TYPE" value="1"/>
+</launchConfiguration>

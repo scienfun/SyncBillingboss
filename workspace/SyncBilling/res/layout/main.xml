@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<AbsoluteLayout android:id="@+id/AbsoluteLayout01" android:layout_width="fill_parent" android:layout_height="fill_parent" xmlns:android="http://schemas.android.com/apk/res/android">
+<EditText android:layout_x="90dip" android:layout_width="wrap_content" android:id="@+id/EditText01" android:text="ID" android:layout_y="20dip" android:layout_height="wrap_content"></EditText>
+<EditText android:layout_x="90dip" android:layout_width="wrap_content" android:id="@+id/EditText02" android:text="Password" android:layout_y="70dip" android:layout_height="wrap_content"></EditText>
+<Button android:id="@+id/Button01" android:layout_x="250dip" android:layout_width="wrap_content" android:layout_y="65dip" android:layout_height="wrap_content" android:text="Login"></Button>
+<Button android:id="@+id/Button02" android:layout_x="50dip" android:layout_width="wrap_content" android:layout_y="150dip" android:layout_height="wrap_content" android:text="Upload"></Button>
+<Button android:id="@+id/Button03" android:layout_x="150dip" android:layout_width="wrap_content" android:layout_y="150dip" android:layout_height="wrap_content" android:text="Download"></Button>
+<TextView android:text="ID" android:layout_x="20dip" android:layout_width="wrap_content" android:id="@+id/TextView01" android:layout_y="35dip" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Password" android:layout_x="20dip" android:layout_width="wrap_content" android:id="@+id/TextView02" android:layout_y="85dip" android:layout_height="wrap_content"></TextView>
+</AbsoluteLayout>

@@ -1,0 +1,8 @@
+class SaveLoginInfo < ActiveRecord::Migration
+  def self.up
+     change_column :user, :login_failure_attempts => :login_failure_attempts+1 
+  end
+  def self.down
+    change_column :user, :login_failure_attempts => 0
+  end
+end

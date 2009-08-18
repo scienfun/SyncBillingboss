@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.rubypeople.rdt.launching.LaunchConfigurationTypeRubyApplication">
+<stringAttribute key="org.eclipse.debug.ui.ATTR_CAPTURE_IN_FILE" value="/home/andrew/workspace/.metadata/.plugins/com.aptana.rdt.rake/rake/tornado_tasks.txt"/>
+<booleanAttribute key="org.eclipse.debug.ui.ATTR_CONSOLE_OUTPUT_ON" value="false"/>
+<booleanAttribute key="org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND" value="true"/>
+<booleanAttribute key="org.eclipse.debug.ui.private" value="true"/>
+<stringAttribute key="org.rubypeople.rdt.launching.FILE_NAME" value="/usr/bin/rake"/>
+<booleanAttribute key="org.rubypeople.rdt.launching.FORCE_NO_CONSOLE" value="true"/>
+<stringAttribute key="org.rubypeople.rdt.launching.PROGRAM_ARGUMENTS" value="--tasks"/>
+<stringAttribute key="org.rubypeople.rdt.launching.PROJECT_NAME" value="tornado"/>
+<booleanAttribute key="org.rubypeople.rdt.launching.REQUIRES_REFRESH" value="true"/>
+<stringAttribute key="org.rubypeople.rdt.launching.WORKING_DIRECTORY" value="/tornado"/>
+</launchConfiguration>

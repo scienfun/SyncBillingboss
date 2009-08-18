@@ -1,0 +1,10 @@
+    <% @customers.size %>
+        <% if @customers.size > 0 %>
+            <% for customer in @customers
+                contact = customer.default_contact %>
+                <%= customer.name %></a>
+  
+        <% end %>
+        <% else %>
+        <p><%= _("No customers.") %></p>
+        <% end %>

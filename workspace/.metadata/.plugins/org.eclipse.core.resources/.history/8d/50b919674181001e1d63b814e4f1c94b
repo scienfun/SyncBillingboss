@@ -1,0 +1,102 @@
+package billingboss.sync;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
+
+import android.app.Activity;
+
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class sync extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    	   {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        final Button button = (Button)findViewById(R.id.Button01);
+        final Button button2 = (Button)findViewById(R.id.Button02);
+        final Button button3 = (Button)findViewById(R.id.Button03);
+        final EditText edit1 = (EditText)findViewById(R.id.EditText01);
+        final EditText edit2 = (EditText)findViewById(R.id.EditText02);
+        
+        button.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							 // login
+							HttpPost httppost = new HttpPost("http://10.152.19.107:3000");
+							HttpResponse response = null; 
+							HttpEntity entity = null; 
+					   DefaultHttpClient httpclient = new DefaultHttpClient();  
+//						  List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+//			      nvps.add(new BasicNameValuePair("login", "a@a.com"));
+//			      //nvps.add(new BasicNameValuePair("password", "1234"));
+//			      try {
+//								httppost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+//							} catch (UnsupportedEncodingException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
+			      // Post, check and show the result (not really spectacular, but works):
+			      try {
+								response = httpclient.execute(httppost);
+							} catch (ClientProtocolException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+			      entity = response.getEntity();
+			      Log.d("httpPost", "Login form get: " + response.getStatusLine());
+			     
+			      if (entity != null) 
+			      			{
+			                   try {
+								entity.consumeContent();
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+			               } 
+						}
+			        });
+   
+        button2.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							//upload
+						}
+			        });
+   
+        button3.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							// download
+						}
+			        });
+    		}
+}
+

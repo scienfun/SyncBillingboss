@@ -1,0 +1,117 @@
+# This controller handles the login/logout function of the site.  
+require "ruby-debug"
+
+class SessionController < ApplicationController
+  include ApiTokenSupport
+
+  layout :external_layout
+  caches_page :new
+  # render new.rhtml
+
+
+  def new
+    if api_token?
+      render :action => 'simply/new'
+    else
+      render_mobile(:mobile_layout => 'external_mobile')
+    end
+  end
+
+#if in test mode, enable log in without accessing the UI. For acceptance test
+if ENV['RAILS_ENV'] == 'test'
+  def test_login
+    user = User.find(params[:id])  
+    self.current_user = user
+    render :text => user.login + " logged in test mode"
+  end
+end
+
+  def create
+    self.current_user = User.authenticate(params[:login], params[:password])
+    if u[:account_locked]
+       flash[:notice] = _("Your account is locked. Please contact administrator.")
+    else
+      if logged_in?
+        if params[:remember_me] == "1"
+          self.current_user.remember_me
+          cookies[:auth_token] = { :value => self.current_user.remember_token , :expires => self.current_user.remember_token_expires_at }
+        end
+        change_language!(current_user.language)
+        api_token.set_current_user(current_user, params[:password]) if api_token?
+        flash[:notice] = _("Logged in successfully.")
+        redirect_to_path_dropping_ssl path_to_redirect
+      else
+        
+        u = User.find_by_login(params[:login])
+        if ::AppConfig.activate_users && u && u.authenticated?(params[:password]) && !u.activated?
+          flash.now[:notice] = _("Your account has not been activated.  Please check the inbox of your email account #{u.email} and look for an email from BillingBoss <info@billingboss.com> that contains the instruction on how to activate the account. If you cannot find the email, click 'Re-send activation' below to have the system resend the email.")
+        elsif u && !u.active?
+          flash.now[:notice] = _("Your account has been disabled.")
+        elsif !u.nil? 
+          u[:login_failure_attempts] = u[:login_failure_attempts] + 1
+          u.save!
+          # exceed the limit of login attempts
+          if (u[:login_failure_attempts] > ::AppConfig.login_failure_atttempts_limit )#|| u[:login_failure_timeout] > ::AppConfig.login_failure_timeout_limit)
+            u[:account_locked] = true
+            flash.now[:warning] = _("Your account has been locked.")
+          else
+            flash.now[:warning] = _("Please enter a correct password. you tried to login #{u[:login_failure_attempts]} times.")
+          end
+        else
+          flash.now[:warning] = _("Please enter a valid login and password.")
+        end
+        if session[:login_from] == "rac"
+          render :template => "rac_contest/login", :layout => "contest" if session[:login_from] == "rac"
+        else
+          if api_token?
+            render :action => 'simply/new'
+          else
+            render_with_mobile_support(:action => :new, :mobile_layout => 'external_mobile')
+          end
+        end
+      end
+    end
+  end
+  
+  def logged_on
+    if api_token?
+      render :action => 'simply/logged_on', :layout => :internal_layout
+    else
+      render
+    end
+  end
+
+  def destroy
+    logout_current_user
+    flash[:notice] = _("You have been logged out.")
+    redirect_to('/')
+  end
+  
+  def redirect
+    
+  end
+  
+  def account_lock
+  
+  end
+
+  protected
+
+  def path_to_redirect
+    if session[:login_from] == "rac"
+      clear_redirect_location('/rac_contest/tell_a_client') 
+    elsif api_token?
+      clear_redirect_location("/session/logged_on")
+    else
+      session[:login_from] = nil
+      case self.current_user.profile.current_view
+        when :admin   
+          clear_redirect_location('/tabs/admin')
+        when :bookkeeper   
+          clear_redirect_location('/tabs/bookkeeper')
+        else # biller  
+          clear_redirect_location('/tabs/biller')
+       end      
+    end
+  end
+end

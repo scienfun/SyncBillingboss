@@ -1,0 +1,74 @@
+package billingboss.sync;
+
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import android.app.Activity;
+
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.animation.Animation;
+import android.widget.Button;
+import android.widget.EditText;
+
+public class sync extends Activity {
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) 
+    	   {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
+        final Button button = (Button)findViewById(R.id.Button01);
+        final Button button2 = (Button)findViewById(R.id.Button02);
+        final Button button3 = (Button)findViewById(R.id.Button03);
+        final EditText edit1 = (EditText)findViewById(R.id.EditText01);
+        final EditText edit2 = (EditText)findViewById(R.id.EditText02);
+        
+        button.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							 // login
+							HttpPost httppost = new HttpPost("http://10.152.19.107:3000/session");
+						  List <NameValuePair> nvps = new ArrayList <NameValuePair>();
+			               nvps.add(new BasicNameValuePair("email", "youremail@email.org"));
+			               nvps.add(new BasicNameValuePair("password", "somepassword"));
+			               
+			               httpost.setEntity(new UrlEncodedFormEntity(nvps, HTTP.UTF_8));
+			               
+			               // Post, check and show the result (not really spectacular, but works):
+			               response = httpclient.execute(httpost);
+			               entity = response.getEntity();
+			               
+			               Log.d("httpPost", "Login form get: " + response.getStatusLine());
+
+			               textMsg.setText("Response: " + response.getStatusLine());
+			               
+			               if (entity != null) {
+			                   entity.consumeContent();
+			               } 
+							session[:login, password]
+							        
+						}
+			        });
+   
+        button2.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							//upload
+						}
+			        });
+   
+        button3.setOnClickListener(new Button.OnClickListener()
+			        {
+						public void onClick(View v) 
+						{
+							// download
+						}
+			        });
+    		}
+}
+

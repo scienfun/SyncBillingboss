@@ -1,0 +1,35 @@
+<% @controller_name = controller.controller_name unless (!controller or !controller.controller_name) %>
+<% @action_name = controller.action_name unless (!controller or !controller.action_name) %>
+<div class="footer">
+  <% if session[:mobile_browser] %>
+    <ul>
+       <% if session[:mobile_browser] %>
+    <ul>
+      <li class="arrow">
+        <% if !::AppConfig.mobile_enabled %>
+        <%= link_to _("Switch to non-mobile version"), :controller => (@controller_name || "home"), :action => (@action_name || "index"), :mobile => "false" %>
+             <% end %>
+      </li>
+    </ul>
+  <% else %>
+    <br/>
+    <div>
+      <ul>
+        <li><a href="/tour"><%= _("Take the Tour") %></a></li>
+        <span class="divide">|</span>
+        <li><a href="http://www.sagespark.com/blog/billingboss" target="_blank"><%= _("Blog") %></a></li>
+        <span class="divide">|</span>
+        <li><a href="http://www.sagespark.com/forums/support-forums/creating-invoices" target="_blank"><%= _("Feedback") %></a></li>
+        <% if ::AppConfig.mobile_enabled %>
+          <span class="divide">|</span>
+          <%#mobile requests will have to be redirected to index, since not all pages support mobile %>
+          <%= link_to _("Mobile version"), :controller => "home", :action => "index", :mobile => "true" %>
+        <% end -%>
+      </ul>
+    </div>
+    <br/>
+  <% end %>
+  <p>
+    <%= _("Billing Boss &copy; 2009 %{sage_link}. All rights reserved.") % {:sage_link => "<a href='http://www.sagesoftware.ca'>Sage</a>"} %>
+  </p>
+</div>

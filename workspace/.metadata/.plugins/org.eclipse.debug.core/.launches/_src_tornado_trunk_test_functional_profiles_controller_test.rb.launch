@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.rubypeople.rdt.testunit.launchconfig">
+<stringAttribute key="org.eclipse.debug.core.source_locator_id" value="org.rubypeople.rdt.debug.ui.rubySourceLocator"/>
+<listAttribute key="org.rubypeople.rdt.launching.CUSTOM_LOAD_PATH">
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeLoadpathEntry externalArchive=&quot;/src/tornado/trunk/lib&quot; path=&quot;3&quot; type=&quot;2&quot;/&gt;&#10;"/>
+<listEntry value="&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;no&quot;?&gt;&#10;&lt;runtimeLoadpathEntry externalArchive=&quot;/src/tornado/trunk/test&quot; path=&quot;3&quot; type=&quot;2&quot;/&gt;&#10;"/>
+</listAttribute>
+<stringAttribute key="org.rubypeople.rdt.launching.FILE_NAME" value="/home/andrew/workspace/.metadata/.plugins/org.rubypeople.rdt.testunit/ruby/RemoteTestRunner.rb"/>
+<stringAttribute key="org.rubypeople.rdt.launching.PROJECT_NAME" value="Billingboss"/>
+<booleanAttribute key="org.rubypeople.rdt.launching.USE_DEFAULT_LOAD_PATH" value="false"/>
+<stringAttribute key="org.rubypeople.rdt.launching.VM_INSTALL_NAME" value="usr"/>
+<stringAttribute key="org.rubypeople.rdt.launching.VM_INSTALL_TYPE_ID" value="org.rubypeople.rdt.launching.StandardVMType"/>
+<stringAttribute key="org.rubypeople.rdt.launching.WORKING_DIRECTORY" value="/src/tornado/trunk"/>
+<stringAttribute key="org.rubypeople.rdt.testunit.CONTAINER" value="=Billingboss/&lt;test\/functional{profiles_controller_test.rb"/>
+<stringAttribute key="org.rubypeople.rdt.testunit.TESTNAME" value=""/>
+<stringAttribute key="org.rubypeople.rdt.testunit.TESTTYPE" value=""/>
+</launchConfiguration>

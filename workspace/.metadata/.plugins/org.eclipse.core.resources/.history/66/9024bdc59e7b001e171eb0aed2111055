@@ -1,0 +1,207 @@
+common:
+  payment_reports: true
+  protect_forms: true
+  hide_theme: true
+  contest:
+    bybs: false
+    rac: false
+  mail_feedback: false
+  quiet_log: true
+  captcha: true
+  referral_captcha: false
+  activate_users: false
+  controlled_signup: false
+  use_ssl: false
+  host: http://localhost:3000
+  secure_host: http://localhost:3000
+  application_name: Billing Boss
+  ssl_port: 443
+  pdf_storage: file
+  pagination:
+    invoices:
+      page_size: 10
+    customers:
+      page_size: 10
+    payments:
+      page_size: 10
+  referrals_size: 3
+  mail:
+    from: admin@sage.com
+    host: http://localhost:3000
+    secure_host: http://localhost:3000
+  attachment_storage: :s3
+  invoice:
+    logo:
+      dimensions: 500>x150>
+      max_size: 1048576
+    send_dialog:
+      width: 580
+      height: 600
+      minHeight: 520
+    customer_dialog:
+      width: 615
+      height: 400
+      resizeable: true
+    pdf_filename_max_length: 64
+    email_link_message: To view or pay this invoice online, please go to
+  bookkeeping_invitation:
+    send_dialog:
+      width: 560
+      height: 500
+      minHeight: 500
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 1
+    complete:
+      process_lock_timeout: 1
+  billing:
+    wait_for_clearing:
+  pdf:
+    prince:
+      windows_executable: "C:/Program Files/Prince/Engine/bin/prince.exe"     
+  hide_paypal: false
+  navigation_tabs: [invoices, customers, reports, settings]
+  views:
+    biller: biller
+    bookkeeper: bookkeeper
+    admin: admin
+  hide_localization: false
+  mobile_enabled: true
+  default_locale: en_US
+  default_language: en
+  available_languages: [de, en, es, fr, gu, hi, it, ko, pt, pt_BR, ru, zh_CN, zh_HK, zh_TW]
+  service_provider:
+    admin_user: blah
+    admin_password: blah2
+development:
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+  captcha: false
+  referral_captcha: false
+  treat_failed_mail_as_delivered: true
+  attachment_storage: file_system
+  mail:
+    # from: admin@INNOV-TESTEMAIL.dev.peachtree.com
+    from: info@billingboss.com
+    host: http://localhost:3000
+    secure_host: http://localhost:3000
+  
+test:
+  protect_forms: false
+  activate_users: false
+  captcha: true
+  referral_captcha: false
+  attachment_storage: file_system
+  mail:
+    from: admin@billingboss.com
+    host: http://localhost:3000
+    secure_host: http://localhost:3000
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 0.1
+    complete:
+      process_lock_timeout: 0.1
+  
+production:
+  use_ssl: true
+  host: http://www.billingboss.com
+  secure_host: https://www.billingboss.com
+  ssl_port: 443
+  captcha: false
+  referral_captcha: false
+  mail:
+    from: info@billingboss.com
+    host: http://www.billingboss.com
+    secure_host: https://www.billingboss.com
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 4
+    complete:
+      process_lock_timeout: 4
+
+staging:
+  captcha: false
+  referral_captcha: false
+  use_ssl: false
+  host: http://staging.billingboss.com
+  secure_host: https://staging.billingboss.com
+  mail:
+    from: BillingBoss <info@billingboss.com>
+    host: http://staging.billingboss.com
+    secure_host: https://staging.billingboss.com
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 4
+    complete:
+      process_lock_timeout: 4
+
+preview:
+  captcha: false
+  referral_captcha: false
+  use_ssl: true
+  host: http://preview.billingboss.com
+  secure_host: https://preview.billingboss.com
+  mail:
+    from: BillingBoss <info@billingboss.com>
+    host: http://preview.billingboss.com
+    secure_host: https://preview.billingboss.com
+  payments:
+    sage:
+      enabled: true
+    sage_sbs:
+      enabled: true
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 4
+    complete:
+      process_lock_timeout: 4
+     
+load_testing:
+  captcha: false
+  referral_captcha: false
+  use_ssl: false
+  host: http://www.mybillingboss.com
+  secure_host: http://www.mybillingboss.com
+  mail:
+    from: BillingBoss <info@billingboss.com>
+    host: http://www.mybillingboss.com
+    secure_host: http://www.mybillingboss.com
+  payments:
+    sage:
+      enabled: false
+    sage_sbs:
+      enabled: false
+    paypal:
+      token_life: 10800
+    confirm:
+      process_lock_timeout: 4
+    complete:
+      process_lock_timeout: 4

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gems>
+	<gem>
+		<name>hpricot</name>
+		<version>0.8.1</version>
+		<description>a swift, liberal HTML parser with a fantastic library</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>net-scp</name>
+		<version>1.0.2</version>
+		<description>A pure Ruby implementation of the SCP client protocol</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>launchy</name>
+		<version>0.3.3</version>
+		<description>Launchy is helper class for launching cross-platform applications in a fire and forget manner</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>term-ansicolor</name>
+		<version>1.0.4</version>
+		<description>Ruby library that colors strings using ANSI escape sequences</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>actionmailer</name>
+		<version>2.3.3</version>
+		<description>Service layer for easy email delivery and testing.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>configuration</name>
+		<version>0.0.5</version>
+		<description>configuration</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activeresource</name>
+		<version>2.3.3</version>
+		<description>Think Active Record for web resources.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>ZenTest</name>
+		<version>3.11.1</version>
+		<description>ZenTest provides 4 different tools and 1 library: zentest, unit_diff, autotest, multiruby, and Test::Rails</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>xml-simple</name>
+		<version>1.0.12</version>
+		<description>A simple API for XML processing.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rspec</name>
+		<version>1.2.8</version>
+		<description>rspec 1.2.8</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>fastthread</name>
+		<version>1.0.7</version>
+		<description>Optimized replacement for thread.rb primitives</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>polyglot</name>
+		<version>0.2.6</version>
+		<description>Allows custom language loaders for specified file extensions to be hooked into require</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>net-ssh-gateway</name>
+		<version>1.0.1</version>
+		<description>A simple library to assist in establishing tunneled Net::SSH connections</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>net-sftp</name>
+		<version>2.0.2</version>
+		<description>A pure Ruby implementation of the SFTP client protocol</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>tinder</name>
+		<version>1.2.0</version>
+		<description>An (unofficial) Campfire API</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>diff-lcs</name>
+		<version>1.1.2</version>
+		<description>Provides a list of changes that represent the difference between two sequenced collections.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>test-unit</name>
+		<version>2.0.3</version>
+		<description>Test::Unit 2.x - Improved version of Test::Unit bundled in Ruby 1.8.x</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>capistrano</name>
+		<version>2.5.8</version>
+		<description>Simple. The way it should be.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>mime-types</name>
+		<version>1.16</version>
+		<description>Manages a MIME Content-Type database that will return the Content-Type for a given filename.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>treetop</name>
+		<version>1.3.0</version>
+		<description>A Ruby-based text parsing and interpretation DSL</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>packet</name>
+		<version>0.1.15</version>
+		<description>Packet, A Pure Ruby library for Event Driven Network Programming.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>net-ssh</name>
+		<version>2.0.11</version>
+		<description>a pure-Ruby implementation of the SSH2 client protocol</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rcov</name>
+		<version>0.8.1.2.0</version>
+		<description>Code coverage analysis tool for Ruby</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rmagick</name>
+		<version>2.11.0</version>
+		<description>Ruby binding to ImageMagick</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>ruby-debug-ide</name>
+		<version>0.4.5</version>
+		<description>IDE interface for ruby-debug.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>actionpack</name>
+		<version>2.3.3</version>
+		<description>Web-flow and rendering framework putting the VC in MVC.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>daemons</name>
+		<version>1.0.10</version>
+		<description>A toolkit to create and control daemons in different ways</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>babel</name>
+		<version>0.1.4</version>
+		<description>Lorem ipsum generator on methamphetamine</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rubyforge</name>
+		<version>1.0.4</version>
+		<description>A script which automates a limited set of rubyforge operations</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>highline</name>
+		<version>1.5.1</version>
+		<description>HighLine is a high-level command-line IO library.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activeresource</name>
+		<version>2.0.2</version>
+		<description>Think Active Record for web resources.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>mocha</name>
+		<version>0.9.7</version>
+		<description>Mocking and stubbing library</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>ruby-debug-base</name>
+		<version>0.10.3</version>
+		<description>Fast Ruby debugger - core component</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>fastercsv</name>
+		<version>1.5.0</version>
+		<description>FasterCSV is CSV, but faster, smaller, and cleaner.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>cucumber</name>
+		<version>0.3.93</version>
+		<description>Executable Feature scenarios</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>linecache</name>
+		<version>0.43</version>
+		<description>Read file with caching</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>builder</name>
+		<version>2.1.2</version>
+		<description>Builders for MarkUp.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>columnize</name>
+		<version>0.3.1</version>
+		<description>Read file with caching</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>aws-s3</name>
+		<version>0.6.2</version>
+		<description>Client library for Amazon&apos;s Simple Storage Service&apos;s REST API</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rake</name>
+		<version>0.8.7</version>
+		<description>Ruby based make-like utility.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>gem_plugin</name>
+		<version>0.2.3</version>
+		<description>A plugin system based on rubygems that uses dependencies only</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>uuidtools</name>
+		<version>1.0.7</version>
+		<description>UUID generator</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>gettext</name>
+		<version>1.93.0</version>
+		<description>Ruby-GetText-Package is a libary and tools to localize messages.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>hoe</name>
+		<version>2.3.2</version>
+		<description>Hoe is a rake/rubygems helper for project Rakefiles</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activesupport</name>
+		<version>2.0.2</version>
+		<description>Support and utility classes used by the Rails framework.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>ruby-debug</name>
+		<version>0.10.3</version>
+		<description>Command line interface (CLI) for ruby-debug-base</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>mysql</name>
+		<version>2.7</version>
+		<description>MySQL/Ruby provides the same functions for Ruby programs that the MySQL C API provides for C programs.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activerecord</name>
+		<version>2.0.2</version>
+		<description>Implements the ActiveRecord pattern for ORM.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rails</name>
+		<version>2.3.3</version>
+		<description>Web-application framework with template engine, control-flow layer, and ORM.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activerecord</name>
+		<version>2.3.3</version>
+		<description>Implements the ActiveRecord pattern for ORM.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>tzinfo</name>
+		<version>0.3.13</version>
+		<description>Daylight-savings aware timezone library</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>rack</name>
+		<version>1.0.0</version>
+		<description>a modular Ruby webserver interface</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>session</name>
+		<version>2.4.0</version>
+		<description>session</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>capistrano-ext</name>
+		<version>1.2.1</version>
+		<description>Useful task libraries and methods for Capistrano</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>mongrel</name>
+		<version>1.1.5</version>
+		<description>A small fast HTTP library and server that runs Rails, Camping, Nitro and Iowa apps.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>actionpack</name>
+		<version>2.0.2</version>
+		<description>Web-flow and rendering framework putting the VC in MVC.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>activesupport</name>
+		<version>2.3.3</version>
+		<description>Support and utility classes used by the Rails framework.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>actionmailer</name>
+		<version>2.0.2</version>
+		<description>Service layer for easy email delivery and testing.</description>
+		<platform>ruby</platform>
+	</gem>
+	<gem>
+		<name>cgi_multipart_eof_fix</name>
+		<version>2.5.0</version>
+		<description>Fix an exploitable bug in CGI multipart parsing.</description>
+		<platform>ruby</platform>
+	</gem>
+</gems>
